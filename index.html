@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Project 5 — Benjamin Plate</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2.5vw;
+      padding: 0;
+      background-color: #202631;
+      color: #fff;
+      line-height: 1.3;
+    }
+    
+    a {
+      color: #4ea4f5;
+    }
+
+    code {
+      background-color: #2a2f3a;
+      color: #fff;
+      padding: 0.25rem;
+      border-radius: 0.25rem;
+    }
+    
+    .main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 95vw;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .image-fit {
+      max-width: min(95vw, 1080px);
+    }
+
+    .two-columns {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      width: 95vw;
+      max-width: 1080px;
+      position: relative;
+    }
+
+    .two-columns .image-fit {
+      max-width: min(calc(95vw / 2 - 1rem), calc(1080px / 2 - 1rem));
+    }
+
+    .three-columns {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      width: 95vw;
+      max-width: 1080px;
+      position: relative;
+    }
+
+    .three-columns .image-fit {
+      max-width: min(calc(95vw / 3 - 0.666rem), calc(1080px / 3 - 0.666rem));
+    }
+
+    @media screen and (max-width: 600px) {
+      .two-columns {
+        flex-direction: column;
+      }
+
+      .two-columns .image-fit {
+        max-width: min(95vw, 1080px);
+      }
+    }
+
+    @media screen and (max-width: 900px) {
+      .three-columns {
+        flex-direction: column;
+      }
+
+      .three-columns .image-fit {
+        max-width: min(95vw, 1080px);
+      }
+    }
+
+    .image-caption-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1rem;
+    }
+    .image-caption-container > p {
+      margin: 0 0 1rem 0;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <h1>Neural Radiance Field (NeRF)</h1>
+
+    <h2>Part 1. Fit a Neural Field to a 2D Image</h2>
+    <p>For this part, I fit a neural network to take in a sinusoidal positional encoding for a given pixel and output the color for that location. My architecture was that described in the project description; a 4-layer MLP with ReLU's in between and a sigmoid output.</p>
+    <p>I tried tuning the learning rate as well as the number of sin and cos values for the positional encoding with the following results (Note that for the PSNR graph below, I took validation points only at 200-iteration intervals as they slowed down training considerably):</p>
+    <p>Learning rate 1e-3, L=10</p>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_1e-3/0.jpg" alt="0 Iterations" />
+        <p>0 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_1e-3/1.jpg" alt="200 Iterations" />
+        <p>200 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_1e-3/2.jpg" alt="400 Iterations" />
+        <p>400 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_1e-3/5.jpg" alt="1000 Iterations" />
+        <p>1000 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_1e-3/10.jpg" alt="2000 Iterations" />
+        <p>2000 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_1e-3/loss.jpg" alt="Loss Curve" />
+        <p>Loss Curve</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_1e-3/psnr.jpg" alt="PSNR Curve (validation)" />
+        <p>PSNR Curve (validation)</p>
+      </div>
+    </div>
+    <p>Learning rate 2e-3, L=32</p>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_32/0.jpg" alt="0 Iterations" />
+        <p>0 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_32/1.jpg" alt="200 Iterations" />
+        <p>200 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_32/2.jpg" alt="400 Iterations" />
+        <p>400 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_32/5.jpg" alt="1000 Iterations" />
+        <p>1000 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_32/10.jpg" alt="2000 Iterations" />
+        <p>2000 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_32/loss.jpg" alt="Loss Curve" />
+        <p>Loss Curve</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_32/psnr.jpg" alt="PSNR Curve (validation)" />
+        <p>PSNR Curve (validation)</p>
+      </div>
+    </div>
+    <p>Learning rate 2e-3, L=128</p>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_best/0.jpg" alt="0 Iterations" />
+        <p>0 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_best/1.jpg" alt="200 Iterations" />
+        <p>200 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_best/2.jpg" alt="400 Iterations" />
+        <p>400 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_best/5.jpg" alt="1000 Iterations" />
+        <p>1000 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_best/10.jpg" alt="2000 Iterations" />
+        <p>2000 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_best/loss.jpg" alt="Loss Curve" />
+        <p>Loss Curve</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_best/psnr.jpg" alt="PSNR Curve (validation)" />
+        <p>PSNR Curve (validation)</p>
+      </div>
+    </div>
+    <p>From the above results, it seems clear that the last of the above hyperparameter configurations performed the best, so I used them on an image of a cross fox. Note that the PSNR was a bit lower for this one than the original image, probably because this image is higher resolution:</p>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_cross/0.jpg" alt="0 Iterations" />
+        <p>0 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_cross/1.jpg" alt="200 Iterations" />
+        <p>200 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_cross/2.jpg" alt="400 Iterations" />
+        <p>400 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_cross/5.jpg" alt="1000 Iterations" />
+        <p>1000 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_cross/10.jpg" alt="2000 Iterations" />
+        <p>2000 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_cross/loss.jpg" alt="Loss Curve" />
+        <p>Loss Curve</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/simple_mlp_cross/psnr.jpg" alt="PSNR Curve (validation)" />
+        <p>PSNR Curve (validation)</p>
+      </div>
+    </div>
+    <p>Here is the training process, modeled every 20 iterations (This uses an external link to my website where I uploaded it because Gradescope would not accept my upload for being too big):</p>
+    <div class="image-caption-container">
+      <img class="image-fit" src="https://ben9583.com/school/CS180_Proj5/cross_fox.gif" alt="Training Sequence" />
+      <p>Training Sequence</p>
+    </div>
+
+    <h2>Part 2. Fit a Neural Radiance Field from Multi-view Images</h2>
+    <h3>Part 2.1: Create Rays from Cameras</h3>
+    <p>For this part, I created three functions that helped convert the camera-relative pixels into rays, which is necessary to feed into the three-dimensional neural network.</p>
+    <p>The <code>transform</code> function converts camera coordinates to world coordinates using the <code>c2w</code> matrix, and so simply performs a batch matrix multiplication.</p>
+    <p>The <code>pixel_to_camera</code> function converts pixels on an image to camera coordinates using the <code>K</code> matrix described in the project description. First, we invert the <code>K</code> matrix, which transforms camera coordinates into pixels, since we need the opposite transformation. Then, we matrix-multiply that with the pixel coordinates scaled by the focal length.</p>
+    <p>The <code>pixel_to_ray</code> function uses the above two functions to finally convert pixels into a ray, made up of an origin and a direction. The origin is simply calculated using the method mentioned in the project description. The direction is gathered by using the above two functions to turn the pixel coordinates into world coordinates, then normalized difference from it to the ray origin.</p>
+
+    <h3>Part 2.2: Sampling</h3>
+    <p>To sample rays from the images, I implemented a method within the <code>NeRF3DImageDataset</code> class. To this end, I sampled <code>num_samples</code> random values within a range between 0 and <code>num_images * image_height * image_width</code>. Each number here represents a unique pixel within one of the images fed into the dataset. From these pixels, I fed them into <code>pixel_to_ray</code> function, each of which with the same <code>K</code> matrix and using the <code>c2w</code> matrix for the corresponding image that the pixel belongs to. The ray origin and direction were used as the input "X" values, and the colors for the given pixels are the "y" values.</p>
+    <p>To sample the points from a given ray, I created a function <code>sample_points_from_ray</code>, which takes in a batch of ray origins, ray directions, a range of distances to sample, the number of points to sample, and a boolean as to whether those points should be randomly perturbed along a uniform distribution. The intervals are intially sampled uniformly and are then perturbed slightly if the boolean argument is true. The points are then sampled between the intervals and the deltas are calculated as being the distance between the intervals, which is necessary to return for the purposes of volumetric rendering. I then do a batch outer product using the PyTorch einstein summation function <code>bi,bj->bij</code>, which gets the coordinates of the points for each batch for each sample.</p>
+    
+    <h3>Part 2.3: Putting the Dataloading All Together</h3>
+    <p>To demonstrate the dataloader, I made use of <code>viser</code> and the provided code snippets from the project description to visualize the sampling of the rays from the dataset. For the two scenarios mentioned in the project description, here are my results (note that the points sampled along the rays are perturbed):</p>
+    <div class="image-caption-container">
+      <img class="image-fit" src="some_rays.jpg" alt="Randomly-sampled Rays" />
+      <p>Randomly-sampled Rays</p>
+    </div>
+    <div class="image-caption-container">
+      <img class="image-fit" src="rays_from_one.jpg" alt="Rays from One Image" />
+      <p>Rays from One Image</p>
+    </div>
+
+    <h3>Part 2.4: Neural Radiance Field</h3>
+    <p>For creating the neural network, I used the design as described in the project description making use of the same techniques I used for the simpler neural network from part 1. I decided to stick with the architecture as described in the project description as I was limited by compute resources and the architecture proved successful for the purposes of the assignment.</p>
+
+    <h3>Part 2.5: Volume Rendering</h3>
+    <p>To get the final pixel value from the output of the neural network, which outputs the color and density values for each sample along a ray, I implemented the discrete volumetric rendering function as described in the paper. This was relatively easy to implement and I was able to exclusively make use of PyTorch functions to speed up calculations, including the <code>torch.cumsum</code> function for the <code>T</code> values. This function passed the test provided in the project description.</p>
+    <p>I attempted training the network on my laptop, but it took around 10 seconds per iteration running on my CPU. To solve this, I booted a T4 GPU instance on Google Colab and cast all PyTorch tensors to the GPU making use of the <code>.to()</code> method, which allowed me to train around 7 times faster.</p>
+    <p>Here are the results on some of the validation images, along with the loss and PSNR curves. I trained for 2000 iterations each with a batch size of 10000, which took about 50 minutes. I was able to get a consider speedup by disabling PyTorch's batching (by setting <code>batch_size=1</code>) and implementing batching straight into my dataset class.</p>
+    <p>Learning rate 4e-3, L=4, Validation Image 0</p>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/100_0.jpg" alt="100 Iterations" />
+        <p>100 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/200_0.jpg" alt="200 Iterations" />
+        <p>200 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/400_0.jpg" alt="400 Iterations" />
+        <p>400 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/1000_0.jpg" alt="1000 Iterations" />
+        <p>1000 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/2000_0.jpg" alt="2000 Iterations" />
+        <p>2000 Iterations</p>
+      </div>
+    </div>
+    <p>Learning rate 4e-3, L=4, Validation Image 1</p>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/100_1.jpg" alt="100 Iterations" />
+        <p>100 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/200_1.jpg" alt="200 Iterations" />
+        <p>200 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/400_1.jpg" alt="400 Iterations" />
+        <p>400 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/1000_1.jpg" alt="1000 Iterations" />
+        <p>1000 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/2000_1.jpg" alt="2000 Iterations" />
+        <p>2000 Iterations</p>
+      </div>
+    </div>
+    <p>Learning rate 4e-3, L=4, Validation Image 2</p>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/100_2.jpg" alt="100 Iterations" />
+        <p>100 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/200_2.jpg" alt="200 Iterations" />
+        <p>200 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/400_2.jpg" alt="400 Iterations" />
+        <p>400 Iterations</p>
+      </div>
+    </div>
+    <div class="three-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/1000_2.jpg" alt="1000 Iterations" />
+        <p>1000 Iterations</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/2000_2.jpg" alt="2000 Iterations" />
+        <p>2000 Iterations</p>
+      </div>
+    </div>
+    <p>Here are the loss and PSNR curves:</p>
+    <div class="two-columns">
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/loss.jpg" alt="Loss Curve" />
+        <p>Loss Curve</p>
+      </div>
+      <div class="image-caption-container">
+        <img class="image-fit" src="outputs/nerf_mlp/psnr.jpg" alt="PSNR Curve (validation)" />
+        <p>PSNR Curve (validation)</p>
+      </div>
+    </div>
+    <p>And here is the GIF output of the result on the test <code>c2w</code> matrices:</p>
+    <div class="image-caption-container">
+      <img class="image-fit" src="outputs/nerf_mlp/out.gif" alt="Final Output" />
+      <p>Final Output</p>
+    </div>
+    <p>The whole process to train this took around 50 minutes, though it took a long time to get everything working properly, which included the following bugs that took quite a few hours to track down:</p>
+    <ul>
+      <li>Passing a PyTorch tensor float instead of a regular Python number into Viser</li>
+      <li>Swapping the coordinates on the <code>uv</code> vector</li>
+      <li>Not properly reading that the <code>c2w</code> matrix from the project description was actually the <code>w2c</code> matrix</li>
+      <li>Many issues with implemnting batching</li>
+      <li>Weird CUDA bugs</li>
+    </ul>
+    <p>I would try experimenting with different architectures on this report, but as I have already used two slip days as a result of getting everything working in the first place, I feel I'll have to do that on my own time. This has been an incredibly interesting project to work on and getting everything running and working as fast and well as it is has been very rewarding. I'm interested to try some of the suggested techniques and bells and whistles mentioned in the project description later, but for now I am tired and need a minute. I think the most interesting thing I learned from this project was how different techniques for calculating the same thing can result in considerable speed-ups in performance, like implementing by using my own batching over PyTorch's own.</p>
+  </div>
+</body>
